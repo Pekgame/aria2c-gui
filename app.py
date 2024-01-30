@@ -41,6 +41,11 @@ def convert_to_bytes(memory_size: str):
         return 404
 
 
+def cancle_download():
+    global popen
+    popen.kill()
+    return "Download cancelled!"
+
 def download(
     url,
     torrent_file,
@@ -132,8 +137,9 @@ def download(
     options.append(f"--dht-listen-port={dht_listen_port_start}-{dht_listen_port_end}")
 
     try:
+        global popen
         last = ""
-        popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True, shell=True)
+        popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
         for stdout_line in iter(popen.stdout.readline, ""):
             print(stdout_line, end="")
             last += stdout_line
@@ -336,7 +342,7 @@ with gr.Blocks(theme=theme) as app:
             ]
 
     btn.click(fn=download, inputs=inp, outputs=out)
-    cancle.click(fn=sp.Popen.terminate, inputs=btn)
+    cancle.click(fn=cancle_download, outputs=out)
 
 if __name__ == "__main__":
     app.launch()
