@@ -19,6 +19,12 @@ Then, you can run the application using the following command.
 $ gradio app.py
 ```
 
+or
+
+```
+$ python app.py
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
