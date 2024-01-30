@@ -43,7 +43,7 @@ def convert_to_bytes(memory_size: str):
 
 def cancle_download():
     global popen
-    popen.kill()
+    popen.terminate()
     return "Download cancelled!"
 
 def download(
