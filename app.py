@@ -67,8 +67,9 @@ def download(
     dht_listen_port_end,
     dht_listen_addr6,
     temp_folder,
-    custom_arguments,
+    custom_arguments
 ):
+    progress(0, desc="Starting...")
     options = ["aria2c.exe", url]
     min_split_size = convert_to_bytes(min_split_size)
     if min_split_size != 404:
@@ -127,7 +128,13 @@ def download(
     options.append(f"--dht-listen-port={dht_listen_port_start}-{dht_listen_port_end}")
 
     try:
-        sp.run(options)
+        popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
+        for stdout_line in iter(popen.stdout.readline, ""):
+            yield stdout_line 
+        popen.stdout.close()
+        return_code = popen.wait()
+        if return_code:
+            return sp.CalledProcessError(return_code, options)
     except KeyboardInterrupt:
         return "Download cancelled!"
 
@@ -187,6 +194,7 @@ with gr.Blocks(theme=theme) as app:
             label="Console Output",
             lines=13,
             placeholder="Console output will appear here.",
+            interactive=True,
         )
     with gr.Tab(label="Advanced Options"):
         with gr.Row():
