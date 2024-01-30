@@ -41,13 +41,6 @@ def convert_to_bytes(memory_size: str):
         return 404
 
 
-def cancle_download():
-    global popen
-    global canceled
-    popen.terminate()
-    canceled = True
-
-
 def download(
     url,
     torrent_file,
@@ -140,14 +133,9 @@ def download(
 
     try:
         global popen
-        global canceled
         last = ""
         popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
         for stdout_line in iter(popen.stdout.readline, ""):
-            if canceled:
-                canceled = False
-                popen.stdout.close()
-                return "Download cancelled!"
             print(stdout_line, end="")
             last += stdout_line
             yield rem_ansi(last)
@@ -209,7 +197,6 @@ with gr.Blocks(theme=theme) as app:
             lines=13,
             placeholder="Console output will appear here.",
         )
-        cancle = gr.Button(value="Cancel Download")
     with gr.Tab(label="Advanced Options"):
         with gr.Row():
             with gr.Column():
@@ -349,7 +336,6 @@ with gr.Blocks(theme=theme) as app:
             ]
 
     btn.click(fn=download, inputs=inp, outputs=out)
-    cancle.click(fn=cancle_download, outputs=out)
 
 if __name__ == "__main__":
     canceled = False
