@@ -9,6 +9,11 @@ import gradio as gr
 import subprocess as sp
 
 
+def rem_ansi(input_string):
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', input_string)
+
+
 def convert_to_bytes(memory_size: str):
     memory_size = memory_size.upper()
 
@@ -129,7 +134,8 @@ def download(
     try:
         popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
         for stdout_line in iter(popen.stdout.readline, ""):
-            yield stdout_line 
+            print(stdout_line, end="")
+            yield rem_ansi(stdout_line)
         popen.stdout.close()
         return_code = popen.wait()
         if return_code:
@@ -143,9 +149,6 @@ def download(
         os.remove(path2)
     if metalink_file:
         os.remove(path3)
-
-    return "Download completed!"
-
 
 theme = gr.themes.Soft(
     font=[gr.themes.GoogleFont("Source Code Pro"), "Arial", "sans-serif"]
