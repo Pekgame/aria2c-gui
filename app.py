@@ -8,6 +8,7 @@ import shutil
 import gradio as gr
 import subprocess as sp
 
+
 def convert_to_bytes(memory_size: str):
     memory_size = memory_size.upper()
 
@@ -33,11 +34,6 @@ def convert_to_bytes(memory_size: str):
             return 404
     else:
         return 404
-
-
-def rem_ansi(input_string: str):
-    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
-    return ansi_escape.sub("", input_string)
 
 
 def download(
@@ -131,10 +127,9 @@ def download(
     options.append(f"--dht-listen-port={dht_listen_port_start}-{dht_listen_port_end}")
 
     try:
-        output = sp.run(options, stdout=sp.PIPE).stdout.decode("utf-8")
-        print(output)
+        sp.run(options)
     except KeyboardInterrupt:
-        print("Download cancelled!")
+        return "Download cancelled!"
 
     if torrent_file:
         os.remove(path1)
@@ -143,7 +138,7 @@ def download(
     if metalink_file:
         os.remove(path3)
 
-    return rem_ansi(output)
+    return "Download completed!"
 
 
 theme = gr.themes.Soft(
