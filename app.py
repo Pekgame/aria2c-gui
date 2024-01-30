@@ -132,10 +132,12 @@ def download(
     options.append(f"--dht-listen-port={dht_listen_port_start}-{dht_listen_port_end}")
 
     try:
+        last = ""
         popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
         for stdout_line in iter(popen.stdout.readline, ""):
             print(stdout_line, end="")
-            yield rem_ansi(stdout_line)
+            last += stdout_line
+            yield rem_ansi(last)
         popen.stdout.close()
         return_code = popen.wait()
         if return_code:
