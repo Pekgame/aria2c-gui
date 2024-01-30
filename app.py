@@ -133,15 +133,12 @@ def download(
 
     try:
         last = ""
-        popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
+        popen = sp.Popen(options, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True, shell=True)
         for stdout_line in iter(popen.stdout.readline, ""):
             print(stdout_line, end="")
             last += stdout_line
             yield rem_ansi(last)
         popen.stdout.close()
-        return_code = popen.wait()
-        if return_code:
-            return sp.CalledProcessError(return_code, options)
     except KeyboardInterrupt:
         return "Download cancelled!"
 
@@ -199,6 +196,7 @@ with gr.Blocks(theme=theme) as app:
             lines=13,
             placeholder="Console output will appear here.",
         )
+        cancle = gr.Button(value="Cancel Download")
     with gr.Tab(label="Advanced Options"):
         with gr.Row():
             with gr.Column():
@@ -338,6 +336,7 @@ with gr.Blocks(theme=theme) as app:
             ]
 
     btn.click(fn=download, inputs=inp, outputs=out)
+    cancle.click(fn=sp.Popen.terminate, inputs=btn)
 
 if __name__ == "__main__":
     app.launch()
