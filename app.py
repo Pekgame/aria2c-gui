@@ -69,7 +69,6 @@ def download(
     temp_folder,
     custom_arguments
 ):
-    progress(0, desc="Starting...")
     options = ["aria2c.exe", url]
     min_split_size = convert_to_bytes(min_split_size)
     if min_split_size != 404:
@@ -194,7 +193,6 @@ with gr.Blocks(theme=theme) as app:
             label="Console Output",
             lines=13,
             placeholder="Console output will appear here.",
-            interactive=True,
         )
     with gr.Tab(label="Advanced Options"):
         with gr.Row():
