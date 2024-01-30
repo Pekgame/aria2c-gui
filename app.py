@@ -341,5 +341,4 @@ with gr.Blocks(theme=theme) as app:
     btn.click(fn=download, inputs=inp, outputs=out)
 
 if __name__ == "__main__":
-    canceled = False
     app.launch()
