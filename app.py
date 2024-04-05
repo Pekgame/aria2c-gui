@@ -201,7 +201,7 @@ with gr.Blocks(theme=theme) as app:
             placeholder="Console output will appear here.",
         )
     with gr.Tab(label="Advanced Options"):
-        with gr.Row():
+        with gr.Row(equal_height=True):
             with gr.Column():
                 inp += [
                     gr.Checkbox(
